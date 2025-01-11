@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import json
 import google.generativeai as genai
+import pysqlite3 as sqlite3
 import chromadb
 from google.api_core import retry
 from chromadb.config import Settings
