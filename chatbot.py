@@ -131,7 +131,7 @@ if prompt := st.chat_input("What is up?"):
         stream = response_generator(gen_output.text)
         response = st.write_stream(stream)
 
-        #gen_output.text
+        print(gen_output.text)
         
     st.session_state.history = st.session_state.history+"\nuser: {"+prompt+ "}" +"\nFutminna chatbot: {"+ gen_output.text+ "}"
     st.session_state.messages.append({"role": "assistant", "content": response})
