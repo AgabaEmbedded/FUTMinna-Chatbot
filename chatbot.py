@@ -63,7 +63,7 @@ def prepare_prompt(query, passage, history):
 
     # This prompt is where you can specify any guidance on tone, or what topics the model should stick to, or avoid.
     prompt = f"""Your name is Futminna Chatbot. You are a helpful chatbot for Federal University of Technology Minna, Niger State, Nigeria a Technology University in Nigeria.
-    You will provide students contextual and accurate answer to queries provided. You are supposed to clear confusion based on their handbook and answers questions using the passage included below.
+    You will provide students contextual and accurate answer to prompt provided. Clear students confusion based on their handbook., necessary passage related to the prompt extracted from the student handbook is included below.
     be detailed in your response giving as much word count as possible.
     don't make reference to the provided in your response
     don't hallucinate it can be costly
@@ -131,7 +131,6 @@ if prompt := st.chat_input("What is up?"):
         stream = response_generator(gen_output.text)
         response = st.write_stream(stream)
 
-        print(gen_output.text)
         
     st.session_state.history = st.session_state.history+"\nuser: {"+prompt+ "}" +"\nFutminna chatbot: {"+ gen_output.text+ "}"
     st.session_state.messages.append({"role": "assistant", "content": response})
