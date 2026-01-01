@@ -2,6 +2,12 @@
 
 A **Retrieval-Augmented Generation (RAG)** chatbot designed to assist students of the **Federal University of Technology Minna (FUTMinna)**, Niger State, Nigeria.
 
+<p align="center">
+  <a href="https://futminna-chatbot.streamlit.app/">
+    <img src="Demo.png" width="100" />
+  </a>
+</p>
+
 The chatbot provides accurate, contextual, and detailed answers based **exclusively** on the official FUTMinna Student Handbook. It uses vector search to retrieve relevant sections and generates reliable responses with minimal hallucination.
 
 ## Features
