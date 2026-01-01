@@ -1,76 +1,76 @@
 # FUTMinna-Chatbot
 
-A Retrieval-Augmented Generation (RAG) chatbot designed to assist students of the **Federal University of Technology Minna (FUTMinna)**, Niger State, Nigeria.
+A **Retrieval-Augmented Generation (RAG)** chatbot designed to assist students of the **Federal University of Technology Minna (FUTMinna)**, Niger State, Nigeria.
 
-This chatbot provides accurate, contextual answers to student queries based on the official FUTMinna Student Handbook. It uses vector embeddings to retrieve relevant passages and generates responses grounded in the handbook content, reducing hallucinations and ensuring reliability.
+The chatbot provides accurate, contextual, and detailed answers based **exclusively** on the official FUTMinna Student Handbook. It uses vector search to retrieve relevant sections and generates reliable responses with minimal hallucination.
 
 ## Features
 
-- **Interactive Chat Interface**: Built with Streamlit for a user-friendly experience.
-- **Grounded Responses**: Retrieves relevant sections from the student handbook using ChromaDB and Gemini embeddings.
-- **Conversation History**: Maintains chat history for contextual responses.
-- **Streaming Responses**: Displays answers word-by-word for a natural feel.
-- **Friendly & Detailed**: Responses are polite, comprehensive, and tailored for students (non-technical audience).
+- Clean, modern **Streamlit chat interface**
+- **Grounded responses** using relevant handbook passages retrieved via ChromaDB
+- **Streaming responses** for a natural conversation feel
+- Persistent local vector database (embeddings computed only once)
+- Friendly, polite, and detailed tone tailored for students
+- Secure API key handling via environment variables
+- Uses the latest Gemini model for speed and quality
 
 ## Tech Stack
 
-- **Streamlit**: For the web-based chat UI.
-- **Google Generative AI (Gemini)**: 
-  - `gemini-1.5-flash-latest` for response generation.
-  - `text-embedding-004` for creating vector embeddings.
-- **ChromaDB**: Local vector database for storing and querying handbook chunks.
-- **Python Libraries**: `google.generativeai`, `chromadb`, `json`, `time`.
+- **Streamlit** – Interactive web UI
+- **Google Generative AI**  
+  - `gemini-1.5-flash-002` (latest Flash model as of 2026) for response generation  
+  - `text-embedding-004` for vector embeddings
+- **ChromaDB** – Local persistent vector database
+- Python 3.8+
 
 ## Prerequisites
 
-- Python 3.8+
-- A Google API Key with access to Gemini models (free tier available via Google AI Studio).
-- The student handbook text chunked into JSON format.
+- Python 3.8 or higher
+- A Google API key with access to Gemini models (obtain from [Google AI Studio](https://aistudio.google.com/))
+- Pre-chunked student handbook in JSON format (`chunked_text.json`)
 
-## Setup and Installation
+## Installation
 
-1. **Clone the repository**:
+1. **Clone the repository**
    ```bash
    git clone https://github.com/yourusername/FUTMinna-Chatbot.git
    cd FUTMinna-Chatbot
    ```
 
-2. **Install dependencies**:
+2. **Install dependencies**
    ```bash
-   pip install streamlit google-generativeai chromadb
+   pip install -r requirements.txt
    ```
 
-3. **Configure Gemini API Key**:
-   - Replace the placeholder API key in the code with your own:
-     ```python
-     genai.configure(api_key="YOUR_GEMINI_API_KEY_HERE")
-     ```
-   - For security, consider using environment variables:
-     ```python
-     import os
-     genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-     ```
+3. **Set your Gemini API key**
+   
+   Recommended: Create a `.env` file in the project root:
+   ```env
+   GEMINI_API_KEY=your_actual_api_key_here
+   ```
+   
+   Or export it in your terminal:
+   ```bash
+   export GEMINI_API_KEY="your_actual_api_key_here"
+   ```
 
 ## Preparing the Knowledge Base
 
-The chatbot relies on a pre-chunked version of the FUTMinna Student Handbook stored as `chunked_text.json`.
+The chatbot requires `chunked_text.json` containing text chunks from the official student handbook.
 
 ### Source
-Download the latest handbook from the official university website:  
-[2023/2024 Session Students’ Handbook](https://futminna.edu.ng/wp-content/uploads/2024/06/2023-2024-Session-Student-Handbook-1-2.pdf)
+Latest handbook:  
+[2023/2024 Session Students’ Handbook](https://futminna.edu.ng/wp-content/uploads/2024/06/2023-2024-Session-Student-Handbook-1-2.pdf)  
+*(Update the source when a newer version is released)*
 
-### How to Create `chunked_text.json`
-1. Extract text from the PDF (using tools like PyPDF2, pdfplumber, or LangChain's PDF loaders).
-2. Chunk the text into manageable pieces (e.g., 500-1000 characters per chunk with overlap).
-3. Save the list of text chunks as a JSON array:
-   ```json
-   ["chunk 1 text...", "chunk 2 text...", ...]
-   ```
+### Generating `chunked_text.json`
 
-Example script snippet (using external libraries like LangChain for chunking):
+You can use any PDF-to-text + chunking method. Example using LangChain (optional):
+
 ```python
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+import json
 
 loader = PyPDFLoader("handbook.pdf")
 documents = loader.load()
@@ -79,50 +79,67 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 chunks = text_splitter.split_documents(documents)
 
 chunk_texts = [doc.page_content for doc in chunks]
-import json
+
 with open("chunked_text.json", "w", encoding="utf-8") as f:
-    json.dump(chunk_texts, f)
+    json.dump(chunk_texts, f, ensure_ascii=False, indent=2)
 ```
 
-Place the generated `chunked_text.json` in the project root. On first run, the app will automatically embed and add these chunks to ChromaDB (stored locally in `./chroma_data`).
+Place `chunked_text.json` in the project root directory.
 
-## Running the App
+On first run, the app will automatically embed all chunks into the local ChromaDB database (stored in `./chroma_data`).
+
+## Running the Chatbot
 
 ```bash
 streamlit run app.py
 ```
 
-(Replace `app.py` with the actual filename of your main script.)
-
-Open the provided local URL in your browser and start chatting!
+Open the local URL shown in your browser and start asking questions!
 
 ## Usage Tips
 
-- Ask questions related to university policies, procedures, academic regulations, etc.
-- The chatbot will only use information from the handbook — it ignores irrelevant passages.
-- Greet it (e.g., "Hello") to get a friendly introduction.
+- Ask about academic regulations, registration procedures, hostel rules, examination policies, etc.
+- The bot only uses information from the loaded handbook.
+- Greet it with "hi" or "hello" for a friendly introduction.
+- Responses are detailed and student-friendly.
+
+## Project Structure
+
+```
+.
+├── app.py                  # Main Streamlit application
+├── requirements.txt        # Python dependencies
+├── chunked_text.json       # Handbook text chunks (you provide)
+├── chroma_data/            # Auto-created: persistent vector database
+└── .env                    # Optional: your API key (gitignored)
+```
 
 ## Limitations
 
-- Responses are strictly grounded in the provided handbook version.
-- Update `chunked_text.json` when a new handbook is released.
-- Local ChromaDB persistence means embeddings are computed only once.
+- Answers are limited to the content and version of the handbook provided.
+- Update `chunked_text.json` whenever a new handbook is released.
+- Runs locally – no external server required.
 
 ## Contributing
 
-Contributions are welcome! Feel free to:
-- Improve the prompt engineering.
-- Add support for multiple/handbook versions.
-- Enhance the UI or add features like file upload for updates.
+Contributions are welcome! Ideas for improvement:
 
-Fork the repo, create a branch, and submit a pull request.
+- Support for multiple handbook versions
+- PDF upload interface for easy updates
+- Clear chat / session reset button
+- Export chat history
+- Better UI styling
+
+Feel free to fork, create a branch, and submit a pull request.
 
 ## License
 
-MIT License — feel free to use and modify for educational purposes.
+MIT License – Free to use, modify, and distribute for educational purposes.
 
 ---
 
 **Official University Website**: [https://futminna.edu.ng/](https://futminna.edu.ng/)
 
-This project is unofficial and built to support FUTMinna students.
+*This is an unofficial student-support project built to help the FUTMinna community.* 
+
+Enjoy chatting with your handbook-powered assistant!
